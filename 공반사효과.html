@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+<style>
+body{margin: 0;}
+#info{
+    float: left;
+    background-color: yellow;
+    width: 100px;
+    height: 600px;
+}
+#container{
+    float: left;
+}
+</style>
+<script src="../js/lib.js"></script>
+<script>
+var fps = 10; //루프의 속도를 결정하는 변수
+var ballArray=new Array();
+var container;
+var info;
+var flag=true;
+var imgArray=[
+    "../images/ball1.png"
+    ,"../images/balls/ball1.webp"
+    ,"../images/balls/ball3.webp"
+    ,"../images/balls/ball4.webp"
+    ,"../images/balls/ball5.webp"
+    ,"../images/balls/ball6.webp"
+    ,"../images/balls/ball7.webp"
+    ,"../images/balls/ball8.webp"
+    ,"../images/balls/ball9.webp"
+    ,"../images/balls/ball10.webp"
+    ];
+//현실의 공을표현해보자
+// 객체지향언어에서는 변수는 사물의 상태를 표현했다고하여
+//속성이라고한다 , 함수는 사물의 동작방법을 결정한다고하여 메서드
+class Ball{
+    //함수가 클래스 안에 들어갔을때, 우리는 이 함수를 그냥 함수가아니라 메서드
+    constructor(src,stepX,stepY){
+        this.img=document.createElement("img");
+        this.src=src;
+        this.img.style.width=25+"px";
+        this.img.style.height=25+"px";
+        this.img.style.position="absolute";
+        this.img.style.top=100+"px";
+        this.img.style.left=100+"px";
+        this.img.src=this.src;
+        this.x=0; //x축 어디에 위치할지 좌표값
+        this.y=0; //y축 어디에 위치할지 좌표값
+        this.velX=stepX; //x축으로 몇걸음씩 움직일지
+        this.velY=stepY; //y축으로 몇걸음씩 움질일지 =즉 속도
+
+        container.appendChild(this.img);
+    }
+
+    // 볼의 움직임을 정의한다!!
+    move(){
+        if(flag){ //flag에 의해 실행될지 여부가 결정!!
+            this.x+=this.velX;
+            this.y+=this.velY;
+
+            //움직이다가 범위를 넘어서게 될때 알맞는 처리!!
+            // console.log(this.y);
+            info.innerText="x축:"+this.x+",y축:"+this.y;
+
+            //y축 벽에 닿으면.. (공의 y축+높이)가 600이상이 되면...
+            //기존의 걸음스탭의 부호를 전환한다!!
+            if(this.y+parseInt(this.img.style.height)>=600 ||this.y<=0){
+                this.velY=-this.velY;
+            }
+            if(this.x+parseInt(this.img.style.width)>=600 ||this.x<=0){
+                this.velX=-this.velX;
+            }
+
+            this.img.style.left=this.x+"px";
+            this.img.style.top=this.y+"px";
+        }
+    }
+}
+// var b = new Ball("yellow");
+// //공이 보유한 변수인 price를 접근해보자!!
+// alert(b.price); //.은 소유권을 의미~~
+window.addEventListener("load",function(){
+    container=document.getElementById("container");
+    container.style.width=600+"px";
+    container.style.height=600+"px";
+    container.style.border="2px solid red";
+
+    //현재 공의 x,y축 위치 정보를 출력할 div
+    info = document.getElementById("info");
+
+    ballArray.push(new Ball("../images/ball1.png",1,3));
+    // ballArray.push(new Ball("../images/ball1.png",2,5));
+    // ballArray.push(new Ball("../images/ball1.png",2,1));
+    gameLoop();
+
+    //스페이스바 제어
+    document.body.addEventListener("keydown",function(e){
+        if(e.keyCode==32){
+            var x = getRandom(1,10);
+            var y = getRandom(1,10);
+            var r = getRandom(0,9);
+            ballArray.push(new Ball(imgArray[r],x,y));
+        }
+    })
+});
+
+//물체마다 setInterval을 두면, 동기화에 문제화가 생기며
+//성능에 문제가 발생하므로, 루프는 하나만 두면 된다!!
+function gameLoop(){
+    console.log("gameLoop() called...");
+    //방금 테어난 볼의 move() 메서드 호출!!
+    for(var i=0;i<ballArray.length; i++){
+        ballArray[i].move();
+    }
+    setTimeout("gameLoop()",fps);
+}
+</script>
+</head>
+<body>
+    <div id="container"></div>
+    <div id="info"></div>
+</body>
+</html>
