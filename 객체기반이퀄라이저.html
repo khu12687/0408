@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+<script src="./Rect.js"></script>
+<script src="../js/lib.js"></script>
+<script>
+var container;
+var bg=["red","orange","yellow","green","blue","navy","purple"];
+var rectArray=new Array();
+
+var rectWidth=30;
+var count=50;
+addEventListener("load",function(){
+    container = document.getElementById("container");
+    createRect();
+    gameLoop();
+    targetLoop();
+});
+//7개의 무지개색 이퀄라이저 바가 화면에 나오게처리!!
+function createRect(){
+    var n=0;
+    for(var i=0; i<20; i++){  
+        //container,width,height,x,y,color,a,targetH
+        var rect = new Rect(container,rectWidth,20,i*rectWidth,0,bg[n],0.1,500);
+        n++;
+        if(n>bg.length-1){
+            n=0;
+        }
+        rectArray.push(rect); //배열에 추가!!
+    
+    }
+}
+//일정시간 간격으로, 목표지점을 재지정할 루프!!
+function targetLoop(){
+   for(var i=0;i<rectArray.length;i++){
+        rectArray[getRandom(0,rectArray.length-1)].targetH=getRandom(1,500);
+        setTimeout("targetLoop()",2000);     
+   }
+}
+function gameLoop(){
+    //사각형들의 render()호출!
+    for(var i=0; i<rectArray.length; i++){
+        rectArray[i].render();
+    }
+    setTimeout("gameLoop()",100);
+}
+</script>
+</head>
+<body>
+    <div id="container"></div>
+</body>
+</html>
